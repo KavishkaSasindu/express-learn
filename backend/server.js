@@ -1,4 +1,5 @@
 const express = require("express");
+const blogRoutes = require("./routes/routes");
 
 // application
 const app = express();
@@ -11,6 +12,30 @@ const users = [
   { id: 1, name: "Kavishka", age: 24 },
   { id: 2, name: "Kapila", age: 24 },
 ];
+
+app.use(blogRoutes);
+
+// middlewares
+const logInMiddleware = (request, response, next) => {
+  console.log(`${request.method} - ${request.url}`);
+  next();
+};
+
+app.use(logInMiddleware);
+
+app.get(
+  "/login",
+  logInMiddleware,
+  (request, response, next) => {
+    console.log("BASE URL 1");
+    next();
+  },
+  (request, response) => {
+    return response.status(200).send({
+      message: "Hello AUthentication",
+    });
+  }
+);
 
 // get request
 app.get("/", (request, response) => {
@@ -46,7 +71,20 @@ app.post("/api/postUsers", (request, response) => {
   return response.status(200).send({
     message: "Done",
     data: request.body,
+    name: request.body.username,
   });
+});
+
+// put request
+app.put("/api/users/:id", (request, response) => {
+  const parseId = parseInt(request.params);
+  const user = users.find((user) => user.id === parseId);
+  if (user) {
+    return response.status(200).send({
+      message: "updated user",
+      data: user,
+    });
+  }
 });
 
 app.listen(PORT, () => {
