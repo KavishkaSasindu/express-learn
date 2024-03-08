@@ -3,6 +3,8 @@ const express = require("express");
 // application
 const app = express();
 
+app.use(express.json());
+
 const PORT = process.env.PORT || 3000;
 
 const users = [
@@ -10,15 +12,18 @@ const users = [
   { id: 2, name: "Kapila", age: 24 },
 ];
 
+// get request
 app.get("/", (request, response) => {
   console.log("Hello World");
   response.status(201).send({ message: "Hello User" });
 });
 
+// get request
 app.get("/api/users", (request, response) => {
   response.status(201).send({ message: users });
 });
 
+// get request
 app.get("/api/users/:id", (request, response) => {
   const parseId = parseInt(request.params.id);
   console.log(parseId);
@@ -33,6 +38,15 @@ app.get("/api/users/:id", (request, response) => {
       message: "Bad request",
     });
   }
+});
+
+// post request
+app.post("/api/postUsers", (request, response) => {
+  console.log(request.body);
+  return response.status(200).send({
+    message: "Done",
+    data: request.body,
+  });
 });
 
 app.listen(PORT, () => {
